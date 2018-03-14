@@ -126,7 +126,7 @@ public class Scheduler {
 		finishTime.put(processID, System.currentTimeMillis());
 		
 		
-		System.out.println("FCFS");
+		System.out.println("FINISH");
 		processQueue.remove();
 		if (!processQueue.isEmpty()) {
 			processExecution.switchToProcess(processQueue.element()); 
