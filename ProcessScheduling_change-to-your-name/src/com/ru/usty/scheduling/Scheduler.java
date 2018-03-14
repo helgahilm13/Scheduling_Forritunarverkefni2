@@ -1,13 +1,22 @@
 package com.ru.usty.scheduling;
+import java.util.Queue;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import com.ru.usty.scheduling.process.ProcessExecution;
 
 public class Scheduler {
-
+	
 	ProcessExecution processExecution;
 	Policy policy;
 	int quantum;
-
+	
+	Queue<Integer> processQueue;
+	Map<Integer, Long> startTime;
+	Map<Integer, Long> responseTime;
+	Map<Integer, Long> finishTime;
+	
 	/**
 	 * Add any objects and variables here (if needed)
 	 */
@@ -31,6 +40,10 @@ public class Scheduler {
 
 		this.policy = policy;
 		this.quantum = quantum;
+		
+		this.startTime = new HashMap<Integer, Long>();
+		this.responseTime = new HashMap<Integer, Long>();
+		this.finishTime = new HashMap<Integer, Long>();
 
 		/**
 		 * Add general initialization code here (if needed)
@@ -38,6 +51,7 @@ public class Scheduler {
 
 		switch(policy) {
 		case FCFS:	//First-come-first-served
+			this.processQueue = new LinkedList<Integer>();
 			System.out.println("Starting new scheduling task: First-come-first-served");
 			/**
 			 * Add your policy specific initialization code here (if needed)
@@ -85,7 +99,20 @@ public class Scheduler {
 	 * DO NOT CHANGE DEFINITION OF OPERATION
 	 */
 	public void processAdded(int processID) {
-
+		
+		System.out.println("start!!");
+		startTime.put(processID, System.currentTimeMillis());
+		if(processQueue.isEmpty()) {
+			processQueue.add(processID);
+			processExecution.switchToProcess(processID);
+			
+			if(!responseTime.containsKey(processID) ) {
+				responseTime.put(processID, System.currentTimeMillis());
+			}
+		}else {
+			processQueue.add(processID);
+		}
+			
 		/**
 		 * Add scheduling code here
 		 */
@@ -96,7 +123,17 @@ public class Scheduler {
 	 * DO NOT CHANGE DEFINITION OF OPERATION
 	 */
 	public void processFinished(int processID) {
-
+		finishTime.put(processID, System.currentTimeMillis());
+		
+		
+		System.out.println("FCFS");
+		processQueue.remove();
+		if (!processQueue.isEmpty()) {
+			processExecution.switchToProcess(processQueue.element()); 
+			if(!responseTime.containsKey(processID) ) {
+				responseTime.put(processQueue.element(), System.currentTimeMillis());
+			}
+		}
 		/**
 		 * Add scheduling code here
 		 */
